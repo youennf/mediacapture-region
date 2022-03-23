@@ -186,9 +186,7 @@
               Calling {{MediaDevices/produceCropTarget}} on an {{HTMLElement}} of a
               supported type associates that element with a {{CropTarget}}.
               This {{CropTarget}} may be used as input to
-              {{BrowserCaptureMediaStreamTrack/cropTo}}. We define a
-              <dfn>valid CropTarget</dfn> as one returned by a previous call to
-              {{MediaDevices/produceCropTarget()}} in the current [=browsing context=].
+              {{BrowserCaptureMediaStreamTrack/cropTo}}.
             </p>
             <p>
               When {{MediaDevices/produceCropTarget}} is called on a given <var>element</var>,
@@ -257,22 +255,22 @@
               </li>
               <li>
                 <p>
-                  The user agent MUST validate <var>cropTarget</var> according to [=this=] track's
-                  current [=crop-state=].
-                </p>
-                <ul>
-                  <li>
-                    If [=this=] track is [=uncropped=], the user agent MUST only accept [=valid
-                    CropTargets=].
-                  </li>
-                  <li>
-                    If [=this=] track is [=cropped=], the user agent MUST accept either [=valid
-                    CropTargets=] or {{undefined}}.
-                  </li>
-                </ul>
-                <p>
-                  When the user agent does not accept <var>cropTarget</var>, it MUST return a new
-                  {{Promise}}, [=rejected=] with an {{UnknownError}}.
+                  If <var>cropTarget</var> is not <code>undefined</code>, run these substeps:
+                  <ol>
+                    <li>
+                      <p>Let <var>document</var> be <var>cropTarget</var>.[[\Element]]'s
+                      <a href="https://dom.spec.whatwg.org/#concept-node-document">document</>,
+                      or <code>null</code> if <var>cropTarget</var>.[[\Element]] no longer refers
+                      to an DOM element.</p>
+                    </li>
+                    <li>
+                      <p>If <var>document</var> is <code>null</code>, return a new
+                      {{Promise}}, [=rejected=] with an {{UnknownError}}.</p>
+                    </li>
+                    <li>
+                      <p>If <var>document</var> is not an [=active document=] of [=this=]'s [=browsing context=],
+                      return a new {{Promise}}, [=rejected=] with an {{UnknownError}}.</p>
+                    </li>
                 </p>
               </li>
               <li>
@@ -286,11 +284,11 @@
                 </p>
                 <ul>
                   <li>
-                    If <var>cropTarget</var> is set to {{undefined}}, the user agent MUST stop
+                    If <var>cropTarget</var> is <code>undefined</code>, the user agent MUST stop
                     cropping. [=This=] video track reverts to the [=uncropped=] state.
                   </li>
                   <li>
-                    If <var>cropTarget</var> is a [=valid CropTarget=], the user agent MUST start
+                    Otherwise, the user agent MUST start
                     cropping [=this=] video track to the contours of the element referenced by this
                     {{CropTarget}}. This means that for each new frame produced on the track, the
                     user agent calculates the bounding box of the pixels belonging to the element,
